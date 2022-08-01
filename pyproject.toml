@@ -24,6 +24,9 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
 click = "8.0.1"
+toshi-hazard-store = {git = "https://github.com/GNS-Science/toshi-hazard-store", rev = "f295ff7acd28d70d14607356056a8ad02808893f"}
+nzshm-common = {git = "https://github.com/GNS-Science/nzshm-common-py.git", rev = "main"}
+pandas = "^1.4.3"
 
 
 [tool.poetry.dev-dependencies]
