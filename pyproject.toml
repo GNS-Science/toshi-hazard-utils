@@ -26,6 +26,7 @@ python = ">=3.8,<4.0"
 click = "8.0.1"
 pandas = "^1.4.3"
 toshi-hazard-store = {git = "https://github.com/GNS-Science/toshi-hazard-store", rev = "19893d71ae042e8e2fef480ddb4d1d606fe32de4"}
+toml = "^0.10.2"
 
 
 [tool.poetry.dev-dependencies]
@@ -54,6 +55,7 @@ toml = {version = "^0.10.2"}
 bump2version = {version = "^1.0.1"}
 jinja2 = {version = "3.0.3"}
 moto = "^3.1.16"
+types-toml = "^0.10.8"
 
 
 [tool.poetry.extras]
@@ -79,7 +81,7 @@ doc = [
     ]
 
 [tool.poetry.scripts]
-toshi-hazard-utils = 'toshi_hazard_utils.cli:main'
+thu = 'toshi_hazard_utils.cli:thu'
 
 [tool.black]
 line-length = 120
