@@ -590,8 +590,8 @@ develop = false
 [package.source]
 type = "git"
 url = "https://github.com/GNS-Science/nzshm-common-py.git"
-reference = "main"
-resolved_reference = "d38292a03bd97462b4d58392fb4fa0a48fcf8afd"
+reference = "d95df51787c1b42e471e9d8e793c119d07a95e74"
+resolved_reference = "d95df51787c1b42e471e9d8e793c119d07a95e74"
 
 [[package]]
 name = "packaging"
@@ -1014,7 +1014,7 @@ develop = false
 
 [package.dependencies]
 numpy = "^1.23.1"
-nzshm-common = {git = "https://github.com/GNS-Science/nzshm-common-py.git", rev = "main"}
+nzshm-common = {git = "https://github.com/GNS-Science/nzshm-common-py.git", rev = "d95df51787c1b42e471e9d8e793c119d07a95e74"}
 pandas = "^1.4.3"
 pynamodb = "^5.2.1"
 pynamodb-attributes = "^0.3.2"
@@ -1027,8 +1027,8 @@ doc = []
 [package.source]
 type = "git"
 url = "https://github.com/GNS-Science/toshi-hazard-store"
-reference = "f295ff7acd28d70d14607356056a8ad02808893f"
-resolved_reference = "f295ff7acd28d70d14607356056a8ad02808893f"
+reference = "19893d71ae042e8e2fef480ddb4d1d606fe32de4"
+resolved_reference = "19893d71ae042e8e2fef480ddb4d1d606fe32de4"
 
 [[package]]
 name = "tox"
@@ -1188,7 +1188,7 @@ test = []
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<4.0"
-content-hash = "e52ec8512987168fb387d5a1847dd666d7316153457b8d9bcd4ea737855a79d2"
+content-hash = "fe84a7184475c9ecd99174246e16cf2d65e0a4a94de48e1e1930898edcd58702"
 
 [metadata.files]
 astunparse = [
