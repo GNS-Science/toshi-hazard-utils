@@ -58,6 +58,9 @@ class HighLevelHazard(unittest.TestCase):
         self.assertEqual(set(VS30S), result.vs30s)
         self.assertEqual(set(lvl / 1e3 for lvl in range(1, N_LVLS)), result.levels)
 
+
+class CodedLocationResampling(unittest.TestCase):
+
     def test_get_nearest_hazard_for_an_arbitrary_location(self):
         gridloc = random.choice(LOCS)
         print(f'gridloc {gridloc}')
@@ -65,10 +68,15 @@ class HighLevelHazard(unittest.TestCase):
         off_lat = round(gridloc.lat + random.randint(0, 9) * 0.01, 3)
         off_lon = round(gridloc.lon + random.randint(0, 9) * 0.01, 3)
         somewhere_off_grid = CodedLocation(off_lat, off_lon, 0.001)
+
         nearest_grid = somewhere_off_grid.downsample(0.2)
 
         print(f'somewhere_off_grid {somewhere_off_grid}')
         print(f'nearest_grid {nearest_grid}')
+
+        self.assertEqual(gridloc, nearest_grid.resample(0.001))
+        self.assertEqual(gridloc, nearest_grid.downsample(0.001))
+        self.assertEqual(gridloc.code, nearest_grid.downsample(0.001).code)
 
         self.assertEqual(gridloc, CodedLocation(nearest_grid.lat, nearest_grid.lon, 0.001))
         self.assertTrue(CodedLocation(nearest_grid.lat, nearest_grid.lon, 0.001) in LOCS)

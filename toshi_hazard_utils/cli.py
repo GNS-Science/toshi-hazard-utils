@@ -50,18 +50,22 @@ def cli_hazard_report(hazard_model_ids, sites, config, resample, verbose):
             sites = sites or conf['report'].get('sites')
             hazard_model_ids = hazard_model_ids or conf['report'].get('hazard_model_ids')
 
+    # parse sites into locations
     locations = []
     for site in sites.split(','):
         loc = CodedLocation(*[float(s) for s in site.split('~')], resolution=0.001)
         loc = loc.resample(float(resample)) if resample else loc
         locations.append(loc.resample(0.001).code)
 
+    # parse hazard_model_ids from option
     hmids = []
     for hmid in hazard_model_ids.split(','):
         hmids.append(hmid.strip())
 
     if verbose:
         click.echo(f"locations {locations}")
+
+    #Crazy - need to wrap generator in list() until we've squashed all the stray 'print' statements
     myhazards = list(hazard_report(hazard_model_ids=hmids, locations=locations))
 
     DESC = "Hazard Aggregation report"

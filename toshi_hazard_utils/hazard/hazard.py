@@ -9,6 +9,7 @@ from toshi_hazard_store import query_v3
 @dataclass
 class ToshiHazardReport:
     loc: CodedLocation
+    model_id: str = field(default_factory=str)
     vs30s: Set[float] = field(default_factory=set)
     imts: Set[str] = field(default_factory=set)
     aggs: Set[str] = field(default_factory=set)
@@ -20,12 +21,15 @@ def hazard_report(hazard_model_ids: Iterable[str], locations: Iterable[CodedLoca
 
     loc_reports: Dict[CodedLocation, ToshiHazardReport] = {}
     for res in query_v3.get_hazard_curves(locations, vs30s=[], hazard_model_ids=hazard_model_ids, imts=[]):
-        loc = CodedLocation(res.lat, res.lon, 0.001)
+        loc_hmi = f'{CodedLocation(res.lat, res.lon, 0.001).code}:{res.hazard_model_id}'
 
-        if loc not in loc_reports.keys():
-            loc_reports[loc] = ToshiHazardReport(loc)  # , {[0]}, {[]}, {[]}, {[]})  # noqa
+        if loc_hmi not in loc_reports.keys():
+            loc_reports[loc_hmi] = ToshiHazardReport(
+                CodedLocation(res.lat, res.lon, 0.001)
+            )  # , {[0]}, {[]}, {[]}, {[]})  # noqa
 
-        report = loc_reports[loc]
+        report = loc_reports[loc_hmi]
+        report.model_id = res.hazard_model_id
         report.imts.add(res.imt)
         report.vs30s.add(res.vs30)
         report.aggs.add(res.agg)
