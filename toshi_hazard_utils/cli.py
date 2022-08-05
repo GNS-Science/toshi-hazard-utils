@@ -1,11 +1,18 @@
 """Console script for toshi_hazard_utils."""
 
 import csv
+import io
 import logging
 import sys
 
 import click
 import toml
+
+try:
+    import pandas as pd
+except ImportError:
+    print("WARNING: export to json (pandas dataframe) required uses the optional dependency - pandas.")
+
 from nzshm_common.location import CodedLocation
 from toshi_hazard_store import model, query_v3
 
@@ -117,11 +124,24 @@ def cli_hazard_export(hazard_model_ids, sites, imts, aggs, vs30s, config, resamp
     if verbose:
         click.echo(output)
 
-    haggs = query_v3.get_hazard_curves(locations, [400], hazard_model_ids, imts=imts, aggs=['mean'])
+    haggs = query_v3.get_hazard_curves(locations, vs30s, hazard_model_ids, imts=imts, aggs=aggs)
 
     if format == 'csv':
         model_writer = csv.writer(output)
         model_writer.writerows(list(model.HazardAggregation.to_csv(haggs)))
+        return
+
+    if format == 'json':
+        # first write to an in memory csv
+        tmpcsv = io.StringIO()
+        model_writer = csv.writer(tmpcsv)
+        model_writer.writerows(list(model.HazardAggregation.to_csv(haggs)))
+        tmpcsv.seek(0)
+        # now build a dataframe
+        df = pd.read_csv(tmpcsv)
+        if verbose:
+            click.echo(df)
+        df.to_json(output)
         return
 
 
