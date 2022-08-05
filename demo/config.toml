@@ -1,12 +1,7 @@
 # thu cli command configuration example
 
-#[environ]
-#AWS_PROFILE = "toshi_batch_devops"
-#NZSHM22_HAZARD_STORE_STAGE = "PROD"
-#REGION = "ap-southeast-2"
-
-[report]
-hazard_model_ids = "HAZARD_MODEL_TEST_1, SLT_TAG_FINAL"
+hazard_model_ids = ["HAZARD_MODEL_TEST_1", "SLT_TAG_FINAL"]
 vs30s = [ 400 ]
+imts = ["PGA", "SA(0.1)", "SA(0.2)", "SA(0.3)", "SA(0.4)", "SA(0.5)", "SA(0.7)", "SA(1.0)", "SA(1.5)", "SA(2.0)", "SA(3.0)", "SA(4.0)", "SA(5.0)"]
 # sites = "-44.23~172.33"
 sites = "-41.3~174.78, -37.78~175.28" #WLG,HLZ

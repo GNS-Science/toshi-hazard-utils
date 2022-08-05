@@ -25,8 +25,8 @@ packages = [
 python = ">=3.8,<4.0"
 click = "8.0.1"
 pandas = "^1.4.3"
-toshi-hazard-store = {git = "https://github.com/GNS-Science/toshi-hazard-store", rev = "19893d71ae042e8e2fef480ddb4d1d606fe32de4"}
 toml = "^0.10.2"
+toshi-hazard-store = {path = "/GNSDATA/API/toshi-hazard-store"}
 
 
 [tool.poetry.dev-dependencies]

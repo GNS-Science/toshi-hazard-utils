@@ -71,14 +71,14 @@ dev = ["build (==0.8.0)", "flake8 (==4.0.1)", "hashin (==0.17.0)", "pip-tools (=
 
 [[package]]
 name = "boto3"
-version = "1.24.42"
+version = "1.24.46"
 description = "The AWS SDK for Python"
 category = "dev"
 optional = false
 python-versions = ">= 3.7"
 
 [package.dependencies]
-botocore = ">=1.27.42,<1.28.0"
+botocore = ">=1.27.46,<1.28.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -87,7 +87,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.27.42"
+version = "1.27.46"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -243,7 +243,7 @@ dev = ["wheel", "flake8", "markdown", "twine"]
 
 [[package]]
 name = "identify"
-version = "2.5.2"
+version = "2.5.3"
 description = "File identification library for Python"
 category = "dev"
 optional = false
@@ -1005,7 +1005,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "toshi-hazard-store"
-version = "0.4.0"
+version = "0.5.0"
 description = "Library for saving and retrieving NZHSM openquake hazard results with convenience (uses AWS Dynamodb)."
 category = "main"
 optional = false
@@ -1025,10 +1025,8 @@ dev = []
 doc = []
 
 [package.source]
-type = "git"
-url = "https://github.com/GNS-Science/toshi-hazard-store"
-reference = "19893d71ae042e8e2fef480ddb4d1d606fe32de4"
-resolved_reference = "19893d71ae042e8e2fef480ddb4d1d606fe32de4"
+type = "directory"
+url = "../../API/toshi-hazard-store"
 
 [[package]]
 name = "tox"
@@ -1120,20 +1118,20 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
 name = "virtualenv"
-version = "20.16.2"
+version = "20.16.3"
 description = "Virtual Python Environment builder"
 category = "dev"
 optional = false
 python-versions = ">=3.6"
 
 [package.dependencies]
-distlib = ">=0.3.1,<1"
-filelock = ">=3.2,<4"
-platformdirs = ">=2,<3"
+distlib = ">=0.3.5,<1"
+filelock = ">=3.4.1,<4"
+platformdirs = ">=2.4,<3"
 
 [package.extras]
-docs = ["proselint (>=0.10.2)", "sphinx (>=3)", "sphinx-argparse (>=0.2.5)", "sphinx-rtd-theme (>=0.4.3)", "towncrier (>=21.3)"]
-testing = ["coverage (>=4)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", "packaging (>=20.0)", "pytest (>=4)", "pytest-env (>=0.6.2)", "pytest-freezegun (>=0.4.1)", "pytest-mock (>=2)", "pytest-randomly (>=1)", "pytest-timeout (>=1)"]
+docs = ["proselint (>=0.13)", "sphinx (>=5.1.1)", "sphinx-argparse (>=0.3.1)", "sphinx-rtd-theme (>=1)", "towncrier (>=21.9)"]
+testing = ["coverage (>=6.2)", "coverage-enable-subprocess (>=1)", "flaky (>=3.7)", "packaging (>=21.3)", "pytest (>=7.0.1)", "pytest-env (>=0.6.2)", "pytest-freezegun (>=0.4.2)", "pytest-mock (>=3.6.1)", "pytest-randomly (>=3.10.3)", "pytest-timeout (>=2.1)"]
 
 [[package]]
 name = "watchdog"
@@ -1196,7 +1194,7 @@ test = []
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<4.0"
-content-hash = "e932932e5016dc8815029cc22594c7db5e9fc3f2f5ce4a01b8b19f5de3dee3a2"
+content-hash = "5a76d9ae3b720326d2272a58f1cbb9ac8c255c245b233f189063baf6f3bddbb9"
 
 [metadata.files]
 astunparse = [
@@ -1240,12 +1238,12 @@ bleach = [
     {file = "bleach-5.0.1.tar.gz", hash = "sha256:0d03255c47eb9bd2f26aa9bb7f2107732e7e8fe195ca2f64709fcf3b0a4a085c"},
 ]
 boto3 = [
-    {file = "boto3-1.24.42-py3-none-any.whl", hash = "sha256:aec404d06690a0ca806592efc6bbe30a9ac88fa2ad73b6d907f7794a8b3b1459"},
-    {file = "boto3-1.24.42.tar.gz", hash = "sha256:df3d6ef02304bd7c3711090936c092d5db735dda109decac1e236c3ef7fdb7af"},
+    {file = "boto3-1.24.46-py3-none-any.whl", hash = "sha256:44026e44549148dbc5b261ead5f6b339e785680c350ef621bf85f7e2fca05b49"},
+    {file = "boto3-1.24.46.tar.gz", hash = "sha256:b2d9d55f123a9a91eea2fd8e379d90abf37634420fbb45c22d67e10b324ec71b"},
 ]
 botocore = [
-    {file = "botocore-1.27.42-py3-none-any.whl", hash = "sha256:f8e6c2f69a9d577fb9c69e4e74f49f4315a48decee0e7dc88b6e470772110884"},
-    {file = "botocore-1.27.42.tar.gz", hash = "sha256:38a180a6666c5a9b069a75ec3cf374ff2a64c3e90c9f24a916858bcdeb04456d"},
+    {file = "botocore-1.27.46-py3-none-any.whl", hash = "sha256:747b7e94aef41498f063fc0be79c5af102d940beea713965179e1ead89c7e9ec"},
+    {file = "botocore-1.27.46.tar.gz", hash = "sha256:f66d8305d1f59d83334df9b11b6512bb1e14698ec4d5d6d42f833f39f3304ca7"},
 ]
 bump2version = [
     {file = "bump2version-1.0.1-py2.py3-none-any.whl", hash = "sha256:37f927ea17cde7ae2d7baf832f8e80ce3777624554a653006c9144f8017fe410"},
@@ -1363,8 +1361,8 @@ ghp-import = [
     {file = "ghp_import-2.1.0-py3-none-any.whl", hash = "sha256:8337dd7b50877f163d4c0289bc1f1c7f127550241988d568c1db512c4324a619"},
 ]
 identify = [
-    {file = "identify-2.5.2-py2.py3-none-any.whl", hash = "sha256:feaa9db2dc0ce333b453ce171c0cf1247bbfde2c55fc6bb785022d411a1b78b5"},
-    {file = "identify-2.5.2.tar.gz", hash = "sha256:a3d4c096b384d50d5e6dc5bc8b9bc44f1f61cefebd750a7b3e9f939b53fb214d"},
+    {file = "identify-2.5.3-py2.py3-none-any.whl", hash = "sha256:25851c8c1370effb22aaa3c987b30449e9ff0cece408f810ae6ce408fdd20893"},
+    {file = "identify-2.5.3.tar.gz", hash = "sha256:887e7b91a1be152b0d46bbf072130235a8117392b9f1828446079a816a05ef44"},
 ]
 idna = [
     {file = "idna-3.3-py3-none-any.whl", hash = "sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff"},
@@ -1758,8 +1756,8 @@ urllib3 = [
     {file = "urllib3-1.26.11.tar.gz", hash = "sha256:ea6e8fb210b19d950fab93b60c9009226c63a28808bc8386e05301e25883ac0a"},
 ]
 virtualenv = [
-    {file = "virtualenv-20.16.2-py2.py3-none-any.whl", hash = "sha256:635b272a8e2f77cb051946f46c60a54ace3cb5e25568228bd6b57fc70eca9ff3"},
-    {file = "virtualenv-20.16.2.tar.gz", hash = "sha256:0ef5be6d07181946891f5abc8047fda8bc2f0b4b9bf222c64e6e8963baee76db"},
+    {file = "virtualenv-20.16.3-py2.py3-none-any.whl", hash = "sha256:4193b7bc8a6cd23e4eb251ac64f29b4398ab2c233531e66e40b19a6b7b0d30c1"},
+    {file = "virtualenv-20.16.3.tar.gz", hash = "sha256:d86ea0bb50e06252d79e6c241507cb904fcd66090c3271381372d6221a3970f9"},
 ]
 watchdog = [
     {file = "watchdog-2.1.9-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:a735a990a1095f75ca4f36ea2ef2752c99e6ee997c46b0de507ba40a09bf7330"},

@@ -5,13 +5,16 @@
 import unittest
 import random
 import itertools
+import io
+import csv
+
 from moto import mock_dynamodb
 
 from nzshm_common.grids.region_grid import load_grid
 from nzshm_common.location.code_location import CodedLocation
 from toshi_hazard_utils.hazard import hazard_report, ToshiHazardReport
 
-from toshi_hazard_store import model
+from toshi_hazard_store import model, query_v3
 
 HAZARD_MODEL_ID = "MYHAZID"
 GRID_02 = load_grid('NZ_0_2_NB_1_1')
@@ -46,21 +49,36 @@ class HighLevelHazard(unittest.TestCase):
 
     def test_list_hazard_data_available_for_grid_location(self):
         loc = LOCS[0]
-        myhazards = list(hazard_report([HAZARD_MODEL_ID], locations=[loc.code]))
-        print(myhazards)
+        hazard_reports = list(hazard_report([HAZARD_MODEL_ID], locations=[loc.code]))
+        print(hazard_reports)
 
-        result = myhazards[0]
+        result = hazard_reports[0]
         self.assertTrue(isinstance(result, ToshiHazardReport))
-        self.assertEqual(len(myhazards), 1)
+        self.assertEqual(len(hazard_reports), 1)
         self.assertEqual(result.loc, loc)
         self.assertEqual(set(IMTS), result.imts)
         self.assertEqual(set(AGGS), result.aggs)
         self.assertEqual(set(VS30S), result.vs30s)
         self.assertEqual(set(lvl / 1e3 for lvl in range(1, N_LVLS)), result.levels)
 
+    def test_export_hazard_to_csv(self):
+        myhazards = list(query_v3.get_hazard_curves([loc.code for loc in LOCS[0:2]], VS30S, [HAZARD_MODEL_ID], IMTS))
+        tmpcsv = io.StringIO()
+        model_writer = csv.writer(tmpcsv)
+        model_writer.writerows(model.HazardAggregation.to_csv(myhazards))
+
+        tmpcsv.seek(0)
+        self.assertTrue(next(tmpcsv).startswith('agg,imt,lat,lon,vs30,poe-0.001,poe-0.002'))
+        self.assertEqual(len(list(tmpcsv)), len(myhazards))
+
+    def test_export_hazard_to_dataframe_json(self):
+        myhazards = list(query_v3.get_hazard_curves([loc.code for loc in LOCS[0:2]], VS30S, [HAZARD_MODEL_ID], IMTS))
+        tmpcsv = io.StringIO()
+        model_writer = csv.writer(tmpcsv)
+        model_writer.writerows(model.HazardAggregation.to_csv(myhazards))
+
 
 class CodedLocationResampling(unittest.TestCase):
-
     def test_get_nearest_hazard_for_an_arbitrary_location(self):
         gridloc = random.choice(LOCS)
         print(f'gridloc {gridloc}')

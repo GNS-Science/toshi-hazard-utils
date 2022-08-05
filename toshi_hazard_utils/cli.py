@@ -1,16 +1,15 @@
 """Console script for toshi_hazard_utils."""
 
+import csv
 import logging
 import sys
 
 import click
 import toml
 from nzshm_common.location import CodedLocation
+from toshi_hazard_store import model, query_v3
 
 from toshi_hazard_utils.hazard import hazard_report
-
-# from toshi_hazard_store import model
-
 
 log = logging.getLogger()
 logging.basicConfig(level=logging.INFO)
@@ -34,8 +33,8 @@ def thu():
 
 
 @thu.command(name='report')
-@click.option('-h', '--hazard_model_ids', help='comma-delimted list of hazard model ids.')
-@click.option('-s', '--sites', help='comma-delimited list of location codes.')
+@click.option('-H', '--hazard_model_ids', help='comma-delimted list of hazard model ids.')
+@click.option('-S', '--sites', help='comma-delimited list of location codes.')
 @click.option('-c', '--config', type=click.Path(exists=True))  # help="path to a valid THU configuration file."
 @click.option('-rs', '--resample', type=click.Choice(choices=['0.1', '0.2']), default=None)
 @click.option('-v', '--verbose', is_flag=True)
@@ -44,11 +43,10 @@ def cli_hazard_report(hazard_model_ids, sites, config, resample, verbose):
 
     if config:
         conf = toml.load(config)
-        if conf.get("report"):
-            if verbose:
-                click.echo(f"using settings in {config} for report")
-            sites = sites or conf['report'].get('sites')
-            hazard_model_ids = hazard_model_ids or conf['report'].get('hazard_model_ids')
+        if verbose:
+            click.echo(f"using settings in {config} for report")
+        sites = sites or conf.get('sites')
+        hazard_model_ids = hazard_model_ids or conf['report'].get('hazard_model_ids')
 
     # parse sites into locations
     locations = []
@@ -65,16 +63,66 @@ def cli_hazard_report(hazard_model_ids, sites, config, resample, verbose):
     if verbose:
         click.echo(f"locations {locations}")
 
-    #Crazy - need to wrap generator in list() until we've squashed all the stray 'print' statements
+    # Crazy - need to wrap generator in list() until we've squashed all the stray 'print' statements
     myhazards = list(hazard_report(hazard_model_ids=hmids, locations=locations))
 
     DESC = "Hazard Aggregation report"
-    # INFO = "Gather information on available hazard cruves for a given site or sites."
+    # INFO = "Gather information on available hazard curves for a given site or sites."
     click.echo("")
     click.echo(DESC)
     click.echo("=" * len(DESC))
     for haz in myhazards:
         click.echo(haz)
+
+
+@thu.command(name='export')
+@click.option('-H', '--hazard_model_ids', help='comma-delimted list of hazard model ids.')
+@click.option('-S', '--sites', help='comma-delimited list of location codes.')
+@click.option('-I', '--imts', help='comma-delimited list of imts.')
+@click.option('-A', '--aggs', help='comma-delimited list of aggs.')
+@click.option('-V', '--vs30s', help='comma-delimited list of vs30s.')
+@click.option('-c', '--config', type=click.Path(exists=True))  # help="path to a valid THU configuration file."
+@click.option('-rs', '--resample', type=click.Choice(choices=['0.1', '0.2']), default=None)
+@click.option('-v', '--verbose', is_flag=True)
+@click.option('-o', '--output', type=click.File('w'), default='-')
+@click.option('-f', '--format', type=click.Choice(choices=['csv', 'json']), default='csv')
+def cli_hazard_export(hazard_model_ids, sites, imts, aggs, vs30s, config, resample, verbose, output, format):
+    """Export hazard curves for a given set of arguments."""
+
+    sites = sites.split(',') if sites else None
+    hazard_model_ids = hazard_model_ids.split(',') if hazard_model_ids else None
+    imts = imts.split(',') if imts else None
+    vs30s = vs30s.split(',') if vs30s else None
+    aggs = aggs.split(',') if aggs else None
+
+    if config:
+        conf = toml.load(config)
+        if verbose:
+            click.echo(f"using settings in {config} for export")
+        sites = sites or conf.get('sites').split(',')
+        hazard_model_ids = hazard_model_ids or conf.get('hazard_model_ids')
+        imts = imts or conf.get('imts')
+        vs30s = vs30s or conf.get('vs30s')
+        aggs = aggs or conf.get('aggs')
+
+    # parse sites into locations
+    locations = []
+    for site in sites:
+        loc = CodedLocation(*[float(s) for s in site.split('~')], resolution=0.001)
+        loc = loc.resample(float(resample)) if resample else loc
+        locations.append(loc.resample(0.001).code)
+
+    if verbose:
+        click.echo(f"{sites} {hazard_model_ids} {imts} {vs30s} {format}")
+    if verbose:
+        click.echo(output)
+
+    haggs = query_v3.get_hazard_curves(locations, [400], hazard_model_ids, imts=imts, aggs=['mean'])
+
+    if format == 'csv':
+        model_writer = csv.writer(output)
+        model_writer.writerows(list(model.HazardAggregation.to_csv(haggs)))
+        return
 
 
 if __name__ == "__main__":
