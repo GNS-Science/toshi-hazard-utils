@@ -27,6 +27,7 @@ click = "8.0.1"
 pandas = "^1.4.3"
 toml = "^0.10.2"
 toshi-hazard-store = {path = "/GNSDATA/API/toshi-hazard-store"}
+click-option-group = "^0.5.3"
 
 
 [tool.poetry.dev-dependencies]

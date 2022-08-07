@@ -1,0 +1,10 @@
+# thu cli command configuration example
+
+hazard_model_ids = ["SLT_v5_gmm_v0"]
+vs30s = [ 400 ]
+imts = ["PGA", "SA(0.5)", "SA(1.5)" ] # SANJAY for gridded
+site_lists = ["NZ_0_2_NB_1_1"]         #0.2 degree NZ grid
+
+# imts = ["PGA"] # "SA(0.1)", "SA(0.2)", "SA(0.3)", "SA(0.4)", "SA(0.5)", "SA(0.7)", "SA(1.0)", "SA(1.5)", "SA(2.0)", "SA(3.0)", "SA(4.0)", "SA(5.0)"]
+# sites = "-44.23~172.33"
+# sites = "-41.0~174.78, -37.8~175.2"    #WLG,HLZ

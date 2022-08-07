@@ -7,12 +7,14 @@ import sys
 
 import click
 import toml
+from click_option_group import MutuallyExclusiveOptionGroup, optgroup
 
 try:
     import pandas as pd
 except ImportError:
     print("WARNING: export to json (pandas dataframe) required uses the optional dependency - pandas.")
 
+from nzshm_common.grids import RegionGrid
 from nzshm_common.location import CodedLocation
 from toshi_hazard_store import model, query_v3
 
@@ -41,11 +43,13 @@ def thu():
 
 @thu.command(name='report')
 @click.option('-H', '--hazard_model_ids', help='comma-delimted list of hazard model ids.')
-@click.option('-S', '--sites', help='comma-delimited list of location codes.')
+@optgroup.group('Site sources', cls=MutuallyExclusiveOptionGroup, help='The sites')
+@optgroup.option('-S', '--sites', help='comma-delimited list of location codes.')
+@optgroup.option('-L', '--locations_id', help='Extract sites from site list ENUM.')
 @click.option('-c', '--config', type=click.Path(exists=True))  # help="path to a valid THU configuration file."
 @click.option('-rs', '--resample', type=click.Choice(choices=['0.1', '0.2']), default=None)
 @click.option('-v', '--verbose', is_flag=True)
-def cli_hazard_report(hazard_model_ids, sites, config, resample, verbose):
+def cli_hazard_report(hazard_model_ids, sites, site_lists, config, resample, verbose):
     """Gather information on available hazard curves for a given site or sites."""
 
     if config:
@@ -84,7 +88,11 @@ def cli_hazard_report(hazard_model_ids, sites, config, resample, verbose):
 
 @thu.command(name='export')
 @click.option('-H', '--hazard_model_ids', help='comma-delimted list of hazard model ids.')
-@click.option('-S', '--sites', help='comma-delimited list of location codes.')
+@optgroup.group('Site sources', cls=MutuallyExclusiveOptionGroup, help='The sites ')
+@optgroup.option('-S', '--sites', help='comma-delimited list of location codes.')
+@optgroup.option('-L', '--site-lists', help='Extract sites from site list ENUM.')
+# @click.option('-S', '--sites', help='comma-delimited list of location codes.')
+# @click.option('-L', '--location_list', help='Extract sites from site list ENUM. ')
 @click.option('-I', '--imts', help='comma-delimited list of imts.')
 @click.option('-A', '--aggs', help='comma-delimited list of aggs.')
 @click.option('-V', '--vs30s', help='comma-delimited list of vs30s.')
@@ -93,10 +101,17 @@ def cli_hazard_report(hazard_model_ids, sites, config, resample, verbose):
 @click.option('-v', '--verbose', is_flag=True)
 @click.option('-o', '--output', type=click.File('w'), default='-')
 @click.option('-f', '--format', type=click.Choice(choices=['csv', 'json']), default='csv')
-def cli_hazard_export(hazard_model_ids, sites, imts, aggs, vs30s, config, resample, verbose, output, format):
+def cli_hazard_export(
+    hazard_model_ids, sites, site_lists, imts, aggs, vs30s, config, resample, verbose, output, format
+):
     """Export hazard curves for a given set of arguments."""
 
     sites = sites.split(',') if sites else None
+    site_lists = site_lists.split(',') if site_lists else None
+
+    if sites and site_lists:
+        raise ValueError("One of sites or site_lists arguments must be supplied.")
+
     hazard_model_ids = hazard_model_ids.split(',') if hazard_model_ids else None
     imts = imts.split(',') if imts else None
     vs30s = vs30s.split(',') if vs30s else None
@@ -106,7 +121,8 @@ def cli_hazard_export(hazard_model_ids, sites, imts, aggs, vs30s, config, resamp
         conf = toml.load(config)
         if verbose:
             click.echo(f"using settings in {config} for export")
-        sites = sites or conf.get('sites').split(',')
+        sites = sites or conf.get('sites', '').split(',')
+        site_lists = site_lists or conf.get('site_lists', [])
         hazard_model_ids = hazard_model_ids or conf.get('hazard_model_ids')
         imts = imts or conf.get('imts')
         vs30s = vs30s or conf.get('vs30s')
@@ -114,10 +130,22 @@ def cli_hazard_export(hazard_model_ids, sites, imts, aggs, vs30s, config, resamp
 
     # parse sites into locations
     locations = []
-    for site in sites:
-        loc = CodedLocation(*[float(s) for s in site.split('~')], resolution=0.001)
-        loc = loc.resample(float(resample)) if resample else loc
-        locations.append(loc.resample(0.001).code)
+
+    if site_lists:
+        # Get locations from the supplied enum(s)
+        for site_list in site_lists:
+            grid = RegionGrid[site_list]
+            grid_locs = grid.load()
+            for gloc in grid_locs:
+                loc = CodedLocation(*gloc, resolution=0.001)
+                loc = loc.resample(float(resample)) if resample else loc
+                locations.append(loc.resample(0.001).code)
+    else:
+        # convert locations fomr sites
+        for site in sites:
+            loc = CodedLocation(*[float(s) for s in site.split('~')], resolution=0.001)
+            loc = loc.resample(float(resample)) if resample else loc
+            locations.append(loc.resample(0.001).code)
 
     if verbose:
         click.echo(f"{sites} {hazard_model_ids} {imts} {vs30s} {format}")
