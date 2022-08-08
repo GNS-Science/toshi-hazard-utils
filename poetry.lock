@@ -1040,8 +1040,10 @@ dev = []
 doc = []
 
 [package.source]
-type = "directory"
-url = "../../API/toshi-hazard-store"
+type = "git"
+url = "https://github.com/GNS-Science/toshi-hazard-store.git"
+reference = "92abb7f6804f2f07d947c62a6f2befe6c111f0c1"
+resolved_reference = "92abb7f6804f2f07d947c62a6f2befe6c111f0c1"
 
 [[package]]
 name = "tox"
@@ -1209,7 +1211,7 @@ test = []
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<4.0"
-content-hash = "5f8e7eb46329e322e75ff34c0c5eec273e20d2e73d68a3cd94b8967fe664fbc4"
+content-hash = "143efa43fb83907ddef4da48a5d68422c76a2700d2d47aa5036abbba90e265e2"
 
 [metadata.files]
 astunparse = [

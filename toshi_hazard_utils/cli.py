@@ -88,23 +88,29 @@ def cli_hazard_report(hazard_model_ids, sites, site_lists, config, resample, ver
 
 @thu.command(name='export')
 @click.option('-H', '--hazard_model_ids', help='comma-delimted list of hazard model ids.')
-@optgroup.group('Site sources', cls=MutuallyExclusiveOptionGroup, help='The sites ')
-@optgroup.option('-S', '--sites', help='comma-delimited list of location codes.')
-@optgroup.option('-L', '--site-lists', help='Extract sites from site list ENUM.')
-# @click.option('-S', '--sites', help='comma-delimited list of location codes.')
-# @click.option('-L', '--location_list', help='Extract sites from site list ENUM. ')
+@optgroup.group('Sites source', cls=MutuallyExclusiveOptionGroup)
+@optgroup.option('-L', '--site-lists', help='One or more site list ENUMs.')
+@optgroup.option('-S', '--sites', help='A comma-delimited list of location codes.')
 @click.option('-I', '--imts', help='comma-delimited list of imts.')
 @click.option('-A', '--aggs', help='comma-delimited list of aggs.')
 @click.option('-V', '--vs30s', help='comma-delimited list of vs30s.')
 @click.option('-c', '--config', type=click.Path(exists=True))  # help="path to a valid THU configuration file."
+@click.option('-lsl', '--list-site_lists', help='print the list of sites list ENUMs and exit', is_flag=True)
 @click.option('-rs', '--resample', type=click.Choice(choices=['0.1', '0.2']), default=None)
 @click.option('-v', '--verbose', is_flag=True)
 @click.option('-o', '--output', type=click.File('w'), default='-')
 @click.option('-f', '--format', type=click.Choice(choices=['csv', 'json']), default='csv')
 def cli_hazard_export(
-    hazard_model_ids, sites, site_lists, imts, aggs, vs30s, config, resample, verbose, output, format
+    hazard_model_ids, sites, site_lists, list_site_lists, imts, aggs, vs30s, config, resample, verbose, output, format
 ):
     """Export hazard curves for a given set of arguments."""
+
+    if list_site_lists:
+        click.echo("ENUM name\tDetails")
+        click.echo("===============\t======================================================================")
+        for rg in RegionGrid:
+            click.echo(f"{rg.name}\t{rg.value}")
+        return
 
     sites = sites.split(',') if sites else None
     site_lists = site_lists.split(',') if site_lists else None
